@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bruno Bros - Plataforma</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="game-panel" aria-label="Jogo de plataforma 2D">
+        <div class="topbar">
+          <div class="brand">
+            <span class="badge">BB</span>
+            <span>Bruno Bros</span>
+          </div>
+          <div class="hud" aria-live="polite">
+            <span>Moedas <strong id="coins">0</strong></span>
+            <span>Vidas <strong id="lives">3</strong></span>
+            <span>Tempo <strong id="timer">180</strong></span>
+          </div>
+        </div>
+
+        <canvas id="game" width="960" height="540" aria-label="Canvas do jogo"></canvas>
+
+        <div class="controls">
+          <button id="leftBtn" class="icon-button" aria-label="Mover para esquerda" title="Esquerda">←</button>
+          <button id="jumpBtn" class="jump-button" aria-label="Pular" title="Pular">Pular</button>
+          <button id="rightBtn" class="icon-button" aria-label="Mover para direita" title="Direita">→</button>
+          <button id="restartBtn" class="restart-button" aria-label="Reiniciar fase" title="Reiniciar">Reiniciar</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
