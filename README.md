@@ -1,6 +1,6 @@
 # Bruno Bros
 
-Jogo de plataforma 2D inspirado em clássicos de pular, correr, coletar moedas e chegar na bandeira.
+Jogo foi criado com inspiração no Super Mario Bros, porém esse aqui se chama Brono Bros, e assim que nasceu o Bruno, o personagem 2d feito para brilhar!
 
 ## Como jogar
 
