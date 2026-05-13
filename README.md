@@ -1,224 +1,79 @@
 🌌 Neon Rift
-
-<div align="center">
-<img src="https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif" width="700px">
 <p align="center">
-  <img src="https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif" width="100%">
+<img src="https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif" width="100%" alt="Neon Rift Banner">
 </p>
-
-<h1 align="center">🌌 Neon Rift</h1>
-
 <h3 align="center">
 Cyberpunk Platform Game Experience
 </h3>
-
 <p align="center">
-⚡ JavaScript • HTML5 • Canvas API • Arcade Gameplay ⚡
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JS">
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+<img src="https://img.shields.io/badge/Canvas_API-000000?style=for-the-badge&logo=canvas&logoColor=white" alt="Canvas">
+<img src="https://img.shields.io/badge/Mobile_Friendly-339933?style=for-the-badge&logo=android&logoColor=white" alt="Mobile">
 </p>
-
----
-
-## 🎮 Sobre o Projeto
-
-O **Neon Rift** é um jogo de plataforma 2D com temática cyberpunk desenvolvido utilizando apenas tecnologias web nativas.
-
-O projeto entrega uma experiência arcade moderna com:
-
-- ⚔️ Sistema de combate
-- 🔫 Disparos de energia
-- ⚡ Dash energético
-- 💥 Explosões especiais
-- 🌆 Cenários neon
-- ✨ Partículas visuais
-- 🎵 Áudio procedural
-- 📱 Compatibilidade mobile
-
----
-
-# 🖼️ Preview
-
 <p align="center">
-  <img src="preview.png" width="85%">
+<a href="#-sobre-o-projeto">Sobre</a> •
+<a href="#-funcionalidades">Funcionalidades</a> •
+<a href="#-tecnologias-utilizadas">Tecnologias</a> •
+<a href="#-controles">Controles</a> •
+<a href="#-como-executar">Execução</a>
 </p>
-
----
-
-# 🚀 Tecnologias Utilizadas
-
-<p align="center">
-
-| Tecnologia | Função |
-|------------|---------|
-| HTML5 | Estrutura |
-| CSS3 | Interface Visual |
-| JavaScript ES6 | Gameplay e lógica |
-| Canvas API | Renderização gráfica |
-| Web Audio API | Sistema de áudio |
-
-</p>
-
----
-
-# 🧠 Conceitos Aplicados
-
-```diff
-+ Programação Modular
-+ Game Loop
-+ Sistema de Entidades
-+ Física e Colisão
-+ Renderização Canvas
-+ Input System
-+ Efeitos Visuais
-+ HUD Dinâmica
-```
-
----
-
-# ⚔️ Funcionalidades
-
-## 🔫 Sistema de Combate
-
-- Ataque corpo a corpo
-- Sistema de dano
-- Feedback visual
-- Inimigos interativos
-
----
-
-## ⚡ Dash Energético
-
-- Movimentação rápida
-- Efeito neon
-- Consumo de energia
-
----
-
-## 💥 Explosão Especial
-
-- Ataque em área
-- Screen shake
-- Partículas dinâmicas
-
----
-
-## ❤️ HUD Cyberpunk
-
-- Barra de vida
-- Barra de energia
-- Sistema de score
-- Nome da fase
-
----
-
-## 📱 Mobile Friendly
-
-- Controles touch
-- Layout responsivo
-- Compatível com mobile
-
----
-
-# 🎮 Controles
-
-| Ação | Tecla |
-|------|--------|
-| Mover | A / D |
-| Pular | Espaço |
-| Atacar | J |
-| Atirar | K |
-| Dash | Shift |
-| Especial | L |
-
----
-
-# 🧩 Estrutura do Projeto
-
-```bash
+🎮 Sobre o Projeto
+O Neon Rift é um jogo de plataforma 2D com estética cyberpunk, desenvolvido exclusivamente com tecnologias web nativas. O foco do projeto foi criar uma experiência arcade fluida, explorando o potencial de renderização do Canvas API e lógica de física customizada.
+⚔️ Funcionalidades Principais
+• Sistema de Combate: Ataques melee e disparos de energia com feedbacks visuais (hit-stop).
+• Movimentação Avançada: Dash energético com rastro de partículas e consumo de estamina.
+• Efeitos Cinematográficos: Screen shake, explosões procedurais e iluminação neon.
+• Áudio Dinâmico: Implementação de trilha e efeitos via Web Audio API.
+• Interface (HUD): Status de vida, energia e score em tempo real.
+🚀 Tecnologias Utilizadas
+Camada	Tecnologia	Utilização
+Engine	HTML5 Canvas	Renderização de sprites e partículas
+Lógica	JavaScript ES6	Game Loop, física e colisões
+Estilo	CSS3	Interface de menus e efeitos de glitch
+Som	Web Audio API	Processamento de áudio espacial e SFX
+🧠 Arquitetura e Conceitos
+O projeto foi construído seguindo princípios de Clean Code e organização modular:
+• Game Loop: Gerenciamento de FPS e sincronização de frames.
+• Entity Component System (ECS): Organização lógica de jogadores, inimigos e projéteis.
+• AABB Collision: Sistema de detecção de colisão otimizado para plataformas.
+• Input Manager: Tratamento simultâneo de teclado e eventos touch.
+🎮 Controles
+Ação	Teclado	Mobile (Touch)
+Mover	A / D	Joystick Virtual
+Pular	Espaço	Botão A
+Atacar	J	Botão X
+Atirar	K	Botão Y
+Dash	Shift	Swipe / Botão L
+Especial	L	Botão Ult
+🧩 Estrutura de Pastas
 NeonRift/
-│
-├── assets/
-│
+├── assets/          # Sprites, SFX e Backgrounds
 ├── src/
-│   ├── audio.js
-│   ├── config.js
-│   ├── entities.js
-│   ├── game.js
-│   ├── input.js
-│   └── renderer.js
-│
+│   ├── audio.js     # Engine de som
+│   ├── config.js    # Constantes e balanceamento
+│   ├── entities.js  # Classes de Personagens/Inimigos
+│   ├── game.js      # Core Engine e Loop
+│   ├── input.js     # Handler de comandos
+│   └── renderer.js  # Desenho no Canvas
 ├── index.html
-├── styles.css
-└── README.md
-```
+└── styles.css
 
----
-
-# 📸 Mobile Preview
-
-<p align="center">
-  <img src="preview-mobileish.png" width="40%">
+▶️ Como Executar
+1. Clone o repositório: git clone https://github.com/SEU-USUARIO/NeonRift.git
+2. Acesse a pasta: cd NeonRift
+3. Abra o arquivo index.html em qualquer navegador moderno.
+👨‍💻 Autor
+MATHEUS DE OLIVEIRA CARVALHO Software Developer & Game Enthusiast
+<p align="left">
+<a href="https://linkedin.com/in/SEU-LINKEDIN" target="_blank">
+<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+</a>
+<a href="https://github.com/SEU-GITHUB" target="_blank">
+<img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
+</a>
 </p>
-
----
-
-# 🔥 Diferenciais
-
-✨ Visual cyberpunk moderno  
-⚡ Gameplay arcade fluido  
-🎵 Áudio procedural  
-🧠 Código modular  
-📱 Compatibilidade mobile  
-💥 Efeitos cinematográficos  
-
----
-
-# ▶️ Como Executar
-
-```bash
-git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
-```
-
-Depois:
-
-```bash
-cd NeonRift
-```
-
-Abra:
-
-```bash
-index.html
-```
-
-no navegador.
-
----
-
-# 📈 Resultado
-
-O projeto demonstra conhecimentos em:
-
-- Desenvolvimento Front-End
-- Game Development
-- JavaScript Avançado
-- Canvas API
-- Arquitetura de Software
-- Sistemas Interativos
-
----
-
-# 👨‍💻 Autor
-
-## Matheus Oliveira
-
-💻 Full Stack Developer  
-🎮 Game Enthusiast  
-⚡ Automation Developer  
-
-> "Code Beyond Limits."
-
----
-
+"Code Beyond Limits."
 <p align="center">
-⚡ Neon Rift • Cyberpunk Platform Experience ⚡
+Desenvolvido com ⚡ por Matheus Oliveira
 </p>
