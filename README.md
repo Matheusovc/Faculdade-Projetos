@@ -45,7 +45,7 @@ Neon Rift é uma recriação estilizada em temática cyberpunk de um jogo de pla
 📸 Preview
 
 <div align="center">
-<img src="https://i.imgur.com/Q0QZ4qg.png" width="800px">
+<img src="https://usbeketrica.com/fr/article/cyberpunk-s-not-dead-bienvenue-a-nigh-city">
 </div>
 
 ⸻
