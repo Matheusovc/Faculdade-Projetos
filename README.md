@@ -1,7 +1,7 @@
 # 🌌 Neon Rift
 
 <p align="center">
-  <img src="https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif" width="100%" alt="Neon Rift Banner">
+  <img src="https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif" width="50%" alt="Neon Rift Banner">
 </p>
 
 <h3 align="center">
