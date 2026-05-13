@@ -156,19 +156,19 @@ NeonRift/
 
 # ▶️ Como Executar
 
-## 1️⃣ Clone o repositório
+## Clone o repositório
 
 ```bash
 git clone https://github.com/SEU-USUARIO/NeonRift.git
 ```
 
-## 2️⃣ Entre na pasta do projeto
+## Entre na pasta do projeto
 
 ```bash
 cd NeonRift
 ```
 
-## 3️⃣ Execute no navegador
+## Execute no navegador
 
 Abra o arquivo:
 
