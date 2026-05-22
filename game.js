@@ -265,6 +265,7 @@ class AudioSystem {
     this.stopSynthMusic();
     const bgMusic = document.getElementById("bgMusic");
     const bossMusic = document.getElementById("bossMusic");
+    const endingMusic = document.getElementById("endingMusic");
     if (bgMusic) {
       bgMusic.pause();
       bgMusic.currentTime = 0;
@@ -273,42 +274,31 @@ class AudioSystem {
       bossMusic.pause();
       bossMusic.currentTime = 0;
     }
+    if (endingMusic) {
+      endingMusic.pause();
+      endingMusic.currentTime = 0;
+    }
   }
 
   playEndingTheme() {
     this.stopAllMusic();
-    if (!this.ctx) return;
-    this.musicGain = this.ctx.createGain();
-    this.musicGain.gain.value = 0.08;
-    this.musicGain.connect(this.master);
-
-    const now = this.ctx.currentTime;
-    
-    // Acordes calmos e suaves (Sintetizador estilo ambient)
-    const playChord = (freqs, time, duration) => {
-      freqs.forEach(freq => {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(this.musicGain);
-        
-        gain.gain.setValueAtTime(0, time);
-        gain.gain.linearRampToValueAtTime(0.3, time + 2);
-        gain.gain.setValueAtTime(0.3, time + duration - 2);
-        gain.gain.linearRampToValueAtTime(0, time + duration);
-        
-        osc.start(time);
-        osc.stop(time + duration);
-      });
-    };
-
-    // Progressão suave
-    playChord([220, 277.18, 329.63], now, 6); // A major
-    playChord([196, 246.94, 293.66], now + 6, 6); // G major
-    playChord([174.61, 220, 261.63], now + 12, 6); // F major
-    playChord([164.81, 207.65, 246.94], now + 18, 8); // E major
+    const endingMusic = document.getElementById("endingMusic");
+    if (endingMusic) {
+      endingMusic.volume = 0;
+      endingMusic.play().catch(e => console.error("Error playing ending music:", e));
+      
+      // Fade-in suave do áudio
+      let vol = 0;
+      const fadeInterval = setInterval(() => {
+        vol += 0.05;
+        if (vol >= 0.7) {
+          endingMusic.volume = 0.7; // Volume emocional e melancólico
+          clearInterval(fadeInterval);
+        } else {
+          endingMusic.volume = vol;
+        }
+      }, 200);
+    }
   }
 
   stopSynthMusic() {
