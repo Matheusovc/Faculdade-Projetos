@@ -36,7 +36,7 @@ class Game {
   }
 
   bindWindow() {
-    window.addEventListener("blur", () => this.input.down.clear());
+    window.addEventListener("blur", () => this.input.clearAll());
   }
 
   tryAutoFullscreen() {
@@ -56,6 +56,7 @@ class Game {
     this.pickups = this.level.pickups.map(([x, y]) => ({ x, y, w: 28, h: 28, taken: false }));
     this.enemies = this.level.enemies.map((enemy) => new Enemy(enemy));
     this.player.reset(this.level.spawn);
+    this.input.clearAll();
     this.stageFlash = 40;
   }
 

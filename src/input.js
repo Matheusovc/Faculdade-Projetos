@@ -93,6 +93,11 @@ export class Input {
     this.pressed.clear();
   }
 
+  clearAll() {
+    this.down.clear();
+    this.pressed.clear();
+  }
+
   tryFullscreen() {
     if (document.fullscreenElement || !this.shell?.requestFullscreen) return;
     this.shell.requestFullscreen({ navigationUI: "hide" }).catch(() => {});

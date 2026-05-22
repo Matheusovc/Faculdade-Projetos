@@ -4,6 +4,7 @@ export class Renderer {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
+    this.ctx.imageSmoothingEnabled = false;
     this.sprite = new Image();
     this.sprite.src = SPRITE_SRC;
     this.cleaned = null;
@@ -16,6 +17,7 @@ export class Renderer {
     buffer.width = this.sprite.width;
     buffer.height = this.sprite.height;
     const bctx = buffer.getContext("2d");
+    bctx.imageSmoothingEnabled = false;
     try {
       bctx.drawImage(this.sprite, 0, 0);
       const image = bctx.getImageData(0, 0, buffer.width, buffer.height);
@@ -35,6 +37,7 @@ export class Renderer {
 
   render(game) {
     const ctx = this.ctx;
+    ctx.imageSmoothingEnabled = false;
     ctx.save();
     ctx.clearRect(0, 0, VIEW.width, VIEW.height);
     const shakeX = (Math.random() - 0.5) * game.shake;
@@ -170,7 +173,7 @@ export class Renderer {
     const { ctx } = this;
     const y = pickup.y + Math.sin(frame * 0.07 + pickup.x) * 5;
     ctx.save();
-    ctx.translate(pickup.x, y);
+    ctx.translate(Math.round(pickup.x), Math.round(y));
     ctx.rotate(Math.PI / 4 + frame * 0.02);
     ctx.fillStyle = "#4df8ff";
     ctx.shadowBlur = 16;
@@ -185,7 +188,7 @@ export class Renderer {
     if (!enemy.alive) return;
     const { ctx } = this;
     ctx.save();
-    ctx.translate(enemy.x + enemy.w / 2, enemy.y + enemy.h / 2);
+    ctx.translate(Math.round(enemy.x + enemy.w / 2), Math.round(enemy.y + enemy.h / 2));
     ctx.shadowBlur = enemy.hit > 0 ? 28 : 16;
     ctx.shadowColor = enemy.hit > 0 ? "#ff3df2" : "#4df8ff";
     ctx.strokeStyle = enemy.type === "turret" ? "#ff3df2" : "#4df8ff";
@@ -221,7 +224,7 @@ export class Renderer {
     const drawW = frame.w * scale;
     const drawH = frame.h * scale;
     ctx.save();
-    ctx.translate(player.x + player.w / 2, player.y + player.h + 7);
+    ctx.translate(Math.round(player.x + player.w / 2), Math.round(player.y + player.h + 7));
     ctx.scale(player.facing, 1);
     ctx.shadowBlur = player.dashTime > 0 ? 24 : 10;
     ctx.shadowColor = player.dashTime > 0 ? "#4df8ff" : "rgba(255,61,242,.6)";
@@ -239,7 +242,7 @@ export class Renderer {
     const anim = SPRITE_ANIMS.projectile;
     const frame = anim.frames[Math.floor(frameNo / anim.speed) % anim.frames.length];
     ctx.save();
-    ctx.translate(projectile.x, projectile.y);
+    ctx.translate(Math.round(projectile.x), Math.round(projectile.y));
     ctx.scale(projectile.facing, 1);
     ctx.shadowBlur = 18;
     ctx.shadowColor = "#4df8ff";
@@ -289,7 +292,7 @@ export class Renderer {
     ctx.fillStyle = particle.color;
     ctx.shadowBlur = 16;
     ctx.shadowColor = particle.color;
-    ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+    ctx.fillRect(Math.round(particle.x), Math.round(particle.y), particle.size, particle.size);
     ctx.restore();
   }
 

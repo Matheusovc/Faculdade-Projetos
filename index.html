@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div id="introScreen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <button id="startIntroBtn" style="padding: 20px 40px; font-size: 24px; cursor: pointer; background: #ff3df2; border: none; color: white; border-radius: 8px; z-index: 101; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 15px #ff3df2;">Iniciar Jogo</button>
+      <video id="introVideo" src="./assets/intro.mp4" style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
+    </div>
+
     <main class="game-shell" aria-label="Neon Rift">
       <canvas id="game" width="960" height="540" aria-label="Neon Rift"></canvas>
 
@@ -42,6 +47,7 @@
     </main>
 
     <audio id="bgMusic" src="./assets/bgm.mp3" loop preload="auto"></audio>
+    <audio id="bossMusic" src="./assets/musica final_boss.mp3" loop preload="auto"></audio>
     <script src="./game.js"></script>
   </body>
 </html>
