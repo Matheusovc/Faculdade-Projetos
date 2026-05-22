@@ -179,14 +179,24 @@ const LEVELS = [
     sky: ["#1a0005", "#350005", "#000000"],
     platforms: [
       ground(0, 1200),
-      pad(400, 320, 400, "neon"),
+      pad(200, 320, 250, "ground"),
+      pad(750, 320, 250, "ground"),
+    ],
+    decorations: [
+      { typeId: 9, x: 50, y: 180, w: 250, h: 320 }, // Tree
+      { typeId: 9, x: 1000, y: 180, w: 250, h: 320 }, // Tree
+      { typeId: 7, x: 400, y: 440, w: 40, h: 60 }, // TombStone
+      { typeId: 8, x: 800, y: 440, w: 45, h: 60 }, // TombStone
+      { typeId: 6, x: 550, y: 470, w: 50, h: 30 }, // Skeleton
+      { typeId: 4, x: 250, y: 280, w: 60, h: 40 }, // DeadBush on pad
+      { typeId: 4, x: 800, y: 280, w: 60, h: 40 }, // DeadBush on pad
     ],
     pickups: [
-      [200, 430], [1000, 430],
-      [450, 290], [700, 290]
+      [200, 250], [1000, 250],
+      [600, 430]
     ],
     enemies: [
-      { x: 900, y: 390, type: "boss", hp: 120 }
+      { x: 900, y: 390, type: "boss", hp: 45 }
     ],
     gate: { x: -1000, y: -1000, w: 0, h: 0 }
   }
@@ -249,6 +259,56 @@ class AudioSystem {
       bossMusic.volume = 0.6;
       bossMusic.play().catch(e => console.log("Audio play blocked:", e));
     }
+  }
+
+  stopAllMusic() {
+    this.stopSynthMusic();
+    const bgMusic = document.getElementById("bgMusic");
+    const bossMusic = document.getElementById("bossMusic");
+    if (bgMusic) {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }
+    if (bossMusic) {
+      bossMusic.pause();
+      bossMusic.currentTime = 0;
+    }
+  }
+
+  playEndingTheme() {
+    this.stopAllMusic();
+    if (!this.ctx) return;
+    this.musicGain = this.ctx.createGain();
+    this.musicGain.gain.value = 0.08;
+    this.musicGain.connect(this.master);
+
+    const now = this.ctx.currentTime;
+    
+    // Acordes calmos e suaves (Sintetizador estilo ambient)
+    const playChord = (freqs, time, duration) => {
+      freqs.forEach(freq => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(this.musicGain);
+        
+        gain.gain.setValueAtTime(0, time);
+        gain.gain.linearRampToValueAtTime(0.3, time + 2);
+        gain.gain.setValueAtTime(0.3, time + duration - 2);
+        gain.gain.linearRampToValueAtTime(0, time + duration);
+        
+        osc.start(time);
+        osc.stop(time + duration);
+      });
+    };
+
+    // Progressão suave
+    playChord([220, 277.18, 329.63], now, 6); // A major
+    playChord([196, 246.94, 293.66], now + 6, 6); // G major
+    playChord([174.61, 220, 261.63], now + 12, 6); // F major
+    playChord([164.81, 207.65, 246.94], now + 18, 8); // E major
   }
 
   stopSynthMusic() {
@@ -435,6 +495,7 @@ class Input {
     for (const [selector, action, hold] of buttons) {
       const button = document.querySelector(selector);
       if (!button) continue;
+      button.setAttribute("tabindex", "-1");
       const press = (event) => {
         event.preventDefault();
         this.audio.unlock();
@@ -472,6 +533,8 @@ class Input {
   clearAll() {
     this.down.clear();
     this.pressed.clear();
+    const activeBtns = document.querySelectorAll(".is-down");
+    if (activeBtns) activeBtns.forEach(b => b.classList.remove("is-down"));
   }
 
   tryFullscreen() {
@@ -502,6 +565,7 @@ class Player {
     this.energy = 100;
     this.facing = 1;
     this.grounded = false;
+    this.hasDoubleJump = true;
     this.invulnerable = 90;
     this.shootCooldown = 0;
     this.attackCooldown = 0;
@@ -548,21 +612,25 @@ class Player {
       return;
     }
 
-    if (game.frame < 10) {
-      input.clearAll();
-    } else {
-      if (input.held("left")) {
-        this.vx -= 0.72 * dt;
-        this.facing = -1;
-      }
-      if (input.held("right")) {
-        this.vx += 0.72 * dt;
-        this.facing = 1;
-      }
+    if (input.held("left")) {
+      this.vx -= 0.72 * dt;
+      this.facing = -1;
     }
-    if (input.consume("jump") && this.grounded) {
-      this.vy = -14.6;
-      this.grounded = false;
+    if (input.held("right")) {
+      this.vx += 0.72 * dt;
+      this.facing = 1;
+    }
+    if (input.consume("jump")) {
+      if (this.grounded) {
+        this.vy = -14.6;
+        this.grounded = false;
+        this.hasDoubleJump = true;
+      } else if (this.hasDoubleJump) {
+        this.vy = -12.5;
+        this.hasDoubleJump = false;
+        game.burst(this.x + this.w / 2, this.y + this.h, "rgba(50, 0, 80, 0.8)", 15, this.facing);
+        if (game.audio.jump) game.audio.jump();
+      }
     }
     if (input.consume("attack")) this.attack(game);
     if (input.consume("shoot")) this.shoot(game);
@@ -602,6 +670,7 @@ class Player {
         this.y = platform.y - this.h;
         this.vy = 0;
         this.grounded = true;
+        this.hasDoubleJump = true;
       } else if (this.vy < 0) {
         this.y = platform.y + platform.h;
         this.vy = 1.8;
@@ -622,8 +691,12 @@ class Player {
       w: 48,
       h: 38,
     };
+    const dmg = Math.floor(2 * (this.damageMultiplier || 1));
     for (const enemy of game.enemies) {
-      if (enemy.alive && rectsOverlap(hitbox, enemy)) game.damageEnemy(enemy, 2, this.facing);
+      if (enemy.alive && rectsOverlap(hitbox, enemy)) {
+        game.damageEnemy(enemy, dmg, this.facing);
+        game.shake = Math.max(game.shake, 8); // Hit-Stop feel
+      }
     }
     game.slashes.push({ ...hitbox, facing: this.facing, life: 12 });
   }
@@ -644,8 +717,9 @@ class Player {
     this.dashCooldown = 54;
     this.dashTime = 13;
     this.animTime = 0;
-    this.invulnerable = Math.max(this.invulnerable, 18);
+    this.invulnerable = Math.max(this.invulnerable, 20); // Ghost dash gives more invuln
     game.shake = Math.max(game.shake, 5);
+    game.burst(this.x + this.w/2, this.y + this.h/2, "rgba(80, 0, 150, 0.7)", 12, this.facing);
     game.audio.dash();
   }
 
@@ -659,7 +733,10 @@ class Player {
     for (const enemy of game.enemies) {
       const dx = enemy.x + enemy.w / 2 - (this.x + this.w / 2);
       const dy = enemy.y + enemy.h / 2 - (this.y + this.h / 2);
-      if (enemy.alive && Math.hypot(dx, dy) < 170) game.damageEnemy(enemy, 4, Math.sign(dx) || this.facing);
+      const dmg = Math.floor(4 * (this.damageMultiplier || 1));
+      if (enemy.alive && Math.hypot(dx, dy) < 170) {
+        game.damageEnemy(enemy, dmg, Math.sign(dx) || this.facing);
+      }
     }
     game.shake = Math.max(game.shake, 12);
     game.radial(this.x + this.w / 2, this.y + this.h / 2);
@@ -854,6 +931,7 @@ class Boss {
     this.vx = 0;
     this.grounded = false;
     this.cooldown = 110;
+    this.phase = 1;
   }
 
   update(game, dt) {
@@ -865,7 +943,7 @@ class Boss {
       }
       if (this.animTime < 9 * 6) this.animTime += dt;
       else {
-        game.win();
+        game.playEndingSequence();
       }
       return;
     }
@@ -892,31 +970,46 @@ class Boss {
       this.facing = distToPlayerX > 0 ? 1 : -1;
     }
 
+    const hpPct = this.hp / this.maxHp;
+    if (hpPct <= 0.5 && this.phase === 1) this.phase = 2;
+    if (hpPct <= 0.25 && this.phase === 2) {
+       this.phase = 3;
+       game.burst(this.x + this.w/2, this.y + this.h/2, "#ff0000", 30, 0);
+    }
+
+    if (this.phase === 3) {
+       game.shake = Math.max(game.shake, 2); // Camera Shake contínuo
+       // Rastro elemental do Boss
+       if (Math.random() > 0.6) {
+         game.burst(this.x + this.w/2, this.y + this.h, "rgba(255, 0, 0, 0.4)", 2, 0);
+       }
+    }
+
     if (this.state === 'Idle' || this.state === 'Run') {
         if (this.cooldown === 0) {
           const rand = Math.random();
           if (rand < 0.35) {
              this.state = 'Jump_Attack';
-             this.stateTimer = 45;
+             this.stateTimer = this.phase >= 2 ? 35 : 45;
              this.animTime = 0;
              this.vy = -12.5;
-             this.vx = this.facing * 8;
+             this.vx = this.facing * (this.phase >= 2 ? 10 : 8);
           } else if (rand < 0.7) {
              this.state = 'Throw';
-             this.stateTimer = 45;
+             this.stateTimer = this.phase >= 2 ? 30 : 45;
              this.animTime = 0;
              this.vx = 0;
           } else {
              this.state = 'Attack';
-             this.stateTimer = 35;
+             this.stateTimer = this.phase >= 2 ? 25 : 35;
              this.animTime = 0;
-             this.vx = this.facing * 3.8;
+             this.vx = this.facing * (this.phase >= 2 ? 5.5 : 3.8);
           }
-          this.cooldown = 140;
+          this.cooldown = this.phase === 3 ? 60 : (this.phase === 2 ? 90 : 140);
         } else {
           if (Math.abs(distToPlayerX) > 130) {
              this.state = 'Run';
-             this.vx = this.facing * 1.8;
+             this.vx = this.facing * (this.phase >= 2 ? 2.5 : 1.8);
           } else {
              this.state = 'Idle';
              this.vx = 0;
@@ -1088,6 +1181,20 @@ class Renderer {
       img.src = `./assets/inimigos/Objects/Bullet_00${i}.png`;
       this.inimigoBullets.push(img);
     }
+
+    this.graveyard = { bg: new Image(), tiles: [], objects: [] };
+    this.graveyard.bg.src = './assets/graveyardtilesetnew/png/BG.png';
+    for (let i = 1; i <= 16; i++) {
+      const img = new Image();
+      img.src = `./assets/graveyardtilesetnew/png/Tiles/Tile (${i}).png`;
+      this.graveyard.tiles.push(img);
+    }
+    const graveyardObjs = ['ArrowSign', 'Bush (1)', 'Bush (2)', 'Crate', 'DeadBush', 'Sign', 'Skeleton', 'TombStone (1)', 'TombStone (2)', 'Tree'];
+    graveyardObjs.forEach(name => {
+      const img = new Image();
+      img.src = `./assets/graveyardtilesetnew/png/Objects/${name}.png`;
+      this.graveyard.objects.push(img);
+    });
   }
 
   prepareSprite() {
@@ -1152,8 +1259,42 @@ class Renderer {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, VIEW.width, VIEW.height);
 
-    if (game.levelIndex === 0) this.city(game);
-    else this.lab(game);
+    if (game.level.shortName === "BOSS") {
+      this.graveyardBg(game);
+    } else if (game.levelIndex === 0) {
+      this.city(game);
+    } else {
+      this.lab(game);
+    }
+  }
+
+  graveyardBg(game) {
+    const { ctx } = this;
+    const camera = game.camera.x;
+    ctx.save();
+    if (this.graveyard.bg.complete) {
+      // Parallax do BG do cemitério
+      for (let x = -((camera * 0.15) % VIEW.width); x < VIEW.width; x += VIEW.width) {
+        ctx.drawImage(this.graveyard.bg, x, 0, VIEW.width, VIEW.height);
+      }
+    }
+    // Fase 2 e 3 do boss (escurecimento e tremor)
+    const boss = game.enemies[0];
+    if (boss && boss.type === "boss") {
+      const hpPct = boss.hp / boss.maxHp;
+      if (hpPct <= 0.5) {
+        ctx.fillStyle = `rgba(15, 5, 20, ${0.4 + (0.5 - hpPct)})`; // Fica mais escuro quanto menos vida
+        ctx.fillRect(0, 0, VIEW.width, VIEW.height);
+      }
+      if (hpPct <= 0.25) {
+        ctx.fillStyle = `rgba(255, 0, 0, ${Math.random() * 0.05})`; // Flashes vermelhos
+        ctx.fillRect(0, 0, VIEW.width, VIEW.height);
+      }
+    }
+    // Neblina / Névoa base
+    ctx.fillStyle = `rgba(20, 25, 30, 0.3)`;
+    ctx.fillRect(0, 0, VIEW.width, VIEW.height);
+    ctx.restore();
   }
 
   city(game) {
@@ -1213,12 +1354,39 @@ class Renderer {
   }
 
   level(game) {
-    game.level.platforms.forEach((platform) => this.platform(platform, game.frame));
+    game.level.platforms.forEach((platform) => this.platform(platform, game.frame, game));
+    
+    if (game.level.shortName === "BOSS" && game.level.decorations) {
+      game.level.decorations.forEach(dec => {
+        const objImg = this.graveyard.objects[dec.typeId];
+        if (objImg && objImg.complete) {
+          this.ctx.drawImage(objImg, dec.x, dec.y, dec.w, dec.h);
+        }
+      });
+    }
+
     this.gate(game.level.gate, game.frame);
   }
 
-  platform(platform, frame) {
+  platform(platform, frame, game) {
     const { ctx } = this;
+    if (game && game.level.shortName === "BOSS" && this.graveyard.tiles.length > 0) {
+      const tileWidth = 128;
+      const tileHeight = 128;
+      ctx.save();
+      for (let x = platform.x; x < platform.x + platform.w; x += tileWidth) {
+        const t = this.graveyard.tiles[1]; // Tile(2) is top grass
+        if (t && t.complete) {
+          const drawW = Math.min(tileWidth, (platform.x + platform.w) - x);
+          ctx.drawImage(t, 0, 0, drawW * (t.width/tileWidth), t.height, x, platform.y, drawW, tileHeight);
+        }
+        ctx.fillStyle = "#161b22";
+        ctx.fillRect(x, platform.y + tileHeight, Math.min(tileWidth, (platform.x + platform.w) - x), platform.h - tileHeight);
+      }
+      ctx.restore();
+      return;
+    }
+
     const glow = platform.type === "ground" ? "#4df8ff" : platform.type === "ad" || platform.type === "tube" ? "#ff3df2" : "#8d5cff";
     ctx.fillStyle = platform.type === "ground" ? "#11152a" : "rgba(13,20,48,.92)";
     ctx.strokeStyle = glow;
@@ -1552,6 +1720,10 @@ class Game {
 
   bindWindow() {
     window.addEventListener("blur", () => this.input.clearAll());
+    window.addEventListener("contextmenu", () => this.input.clearAll());
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) this.input.clearAll();
+    });
   }
 
   tryAutoFullscreen() {
@@ -1578,13 +1750,21 @@ class Game {
     
     if (this.level.shortName === "BOSS") {
       this.audio.playBossMusic();
+      this.player.maxHp = 8;
+      this.player.hp = 8;
+      this.player.energy = 100;
+      this.player.damageMultiplier = 1.5;
     } else {
       this.audio.playBgMusic();
+      this.player.maxHp = 5;
+      this.player.hp = 5;
+      this.player.damageMultiplier = 1;
     }
   }
 
   restart() {
     this.score = 0;
+    this.frame = 0;
     this.loadLevel(0);
     this.audio.unlock();
   }
@@ -1603,7 +1783,7 @@ class Game {
   }
 
   update(dt) {
-    if (this.input.consume("restart")) this.restart();
+    if (this.input.consume("restart") && this.state !== "cinematic") this.restart();
 
     if (this.state === "playing") {
       this.player.update(this, dt);
@@ -1616,8 +1796,10 @@ class Game {
       this.updateCamera(dt);
     }
 
-    this.updateEffects(dt);
-    this.updateHud();
+    if (this.state !== "cinematic") {
+      this.updateEffects(dt);
+      this.updateHud();
+    }
     this.input.clearFrame();
   }
 
@@ -1699,6 +1881,34 @@ class Game {
     this.score += 500;
     this.shake = 8;
     this.audio.win();
+  }
+
+  playEndingSequence() {
+    if (this.state === "cinematic") return;
+    this.state = "cinematic";
+    
+    // Interrompe imediatamente qualquer controle
+    this.input.clearAll();
+    
+    // Parar a música da boss fight imediatamente para o silêncio dramático
+    this.audio.stopAllMusic();
+
+    // Ocultar a interface do jogo (HUD, canvas, controles)
+    document.querySelector(".game-shell").style.display = "none";
+    
+    // Exibir e tocar o vídeo final
+    const endingScreen = document.getElementById("endingScreen");
+    const finalVideo = document.getElementById("finalVideo");
+    const creditsScreen = document.getElementById("creditsScreen");
+    
+    endingScreen.style.display = "block";
+    finalVideo.play().catch(e => console.error("Erro ao tocar vídeo final:", e));
+
+    finalVideo.addEventListener("ended", () => {
+      // Transição suave para a tela preta com a mensagem
+      creditsScreen.style.opacity = "1";
+      this.audio.playEndingTheme();
+    });
   }
 
   lose() {
