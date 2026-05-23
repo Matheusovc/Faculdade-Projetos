@@ -567,6 +567,8 @@ class Player {
     this.hurtTime = 0;
     this.deadTime = 0;
     this.animTime = 0;
+    this.firstMoveDone = false;
+    this.firstMoveTime = 0;
   }
 
   get anim() {
@@ -599,6 +601,24 @@ class Player {
       this.deadTime += dt;
       this.vy += VIEW.gravity * dt;
       this.y += this.vy * dt;
+      return;
+    }
+
+    // Hack para corrigir stuck input ao iniciar o jogo
+    if (!this.firstMoveDone && game.levelIndex === 0 && input.pressed.size > 0) {
+      this.firstMoveDone = true;
+      this.firstMoveTime = 8; // Passo pequeno (duração)
+    } else if (!this.firstMoveDone && game.levelIndex !== 0) {
+      this.firstMoveDone = true;
+    }
+
+    if (this.firstMoveTime > 0) {
+      this.firstMoveTime -= dt;
+      this.vx = -6; // Passo pequeno para trás (bem fraco)
+      this.facing = 1; 
+      this.vy += VIEW.gravity * dt;
+      this.collide(level.platforms, dt);
+      this.x = Math.max(0, Math.min(level.width - this.w, this.x));
       return;
     }
 
