@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neon Rift</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" />
+    <link rel="stylesheet" href="./styles.css" />
+
+  </head>
+  <body>
+    <div id="introScreen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <button id="startIntroBtn" style="padding: 20px 40px; font-size: 24px; cursor: pointer; background: #ff3df2; border: none; color: white; border-radius: 8px; z-index: 101; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 15px #ff3df2;">Iniciar Jogo</button>
+      <video id="introVideo" src="./assets/intro.mp4" style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
+    </div>
+
+    <div id="endingScreen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 999; display: none;">
+      <video id="finalVideo" src="./assets/Clipfinal.mp4" style="width: 100%; height: 100%; object-fit: cover;"></video>
+      <div id="creditsScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 3s ease-in;">
+        <h1 style="color: white; font-family: 'Press Start 2P', monospace, sans-serif; font-size: 32px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); letter-spacing: 2px;">Obrigado por jogar</h1>
+      </div>
+    </div>
+
+    <main class="game-shell" aria-label="Neon Rift">
+      <canvas id="game" width="960" height="540" aria-label="Neon Rift"></canvas>
+
+      <section class="hud" aria-live="polite">
+        <div class="brand">
+          <span class="brand-mark">NR</span>
+          <span>Neon Rift</span>
+        </div>
+        <div class="hud-grid">
+          <div class="meter">
+            <span>HP</span>
+            <i><b id="healthMeter"></b></i>
+          </div>
+          <div class="meter energy">
+            <span>EN</span>
+            <i><b id="energyMeter"></b></i>
+          </div>
+          <div class="counter"><span id="stageName">City</span></div>
+          <div class="counter"><span id="score">0</span></div>
+        </div>
+      </section>
+
+      <nav class="controls" aria-label="Controles">
+        <button id="leftBtn" aria-label="Mover para esquerda">‹</button>
+        <button id="jumpBtn" aria-label="Pular">⌃</button>
+        <button id="rightBtn" aria-label="Mover para direita">›</button>
+        <button id="attackBtn" aria-label="Ataque">⌁</button>
+        <button id="shootBtn" aria-label="Atirar">•</button>
+        <button id="dashBtn" aria-label="Dash energetico">⇢</button>
+        <button id="powerBtn" aria-label="Explosao de energia">✦</button>
+        <button id="restartBtn" aria-label="Reiniciar">↻</button>
+      </nav>
+    </main>
+
+    <audio id="bgMusic" src="./assets/bgm.mp3" loop preload="auto"></audio>
+    <audio id="bossMusic" src="./assets/musica final_boss.mp3" loop preload="auto"></audio>
+    <audio id="endingMusic" src="./assets/musicaobrigado.mp3" loop preload="auto"></audio>
+    <script src="./game.js"></script>
+  </body>
+</html>
